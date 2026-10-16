@@ -1,6 +1,6 @@
 # SME Business Dashboard
 
-**Stop building reports by hand.** One dashboard for your orders, invoices and customers, with automated summaries and reminders (automations coming in week 3).
+**Stop building reports by hand.** One dashboard for your orders, invoices and customers, with automated summaries and reminders.
 
 👉 **[Live demo](https://sme-dashboard-cl9flxpzsuqyssqtymdxrc.streamlit.app/)** (fake data, no login)
 
@@ -30,5 +30,14 @@ pytest                          # KPI tests
 ## GDPR notes
 The demo contains only fake data. For real customer data use an EU-hosted PostgreSQL (e.g. Neon or Supabase in Frankfurt) and an EU email provider, and sign a data processing agreement (AVV) with each provider.
 
-## Status
-Week 1 scaffold: schema, seed script, KPI functions with tests, first dashboard (KPI cards, revenue chart, top tables, open invoices, DE/EN).
+## Features
+- Dashboard: KPI cards with change vs. previous period, revenue chart (day/week/month), top products and customers, open and overdue invoices
+- Automations: weekly or daily summary email, low-stock alert, payment reminders, settings page
+- CSV/Excel import, DATEV export, German and English UI
+- Tests: `pytest` (92 tests)
+
+## Stack
+Python 3.9+, Streamlit, SQLAlchemy (SQLite demo, PostgreSQL production), pandas, Plotly, GitHub Actions.
+
+## License
+MIT
