@@ -8,6 +8,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.data import load_orders
+from app.formatting import format_eur
 from app.kpis import compute_kpis, previous_period
 from app.mailer import send_email
 from app.models import Customer, Invoice, Order, Product, Setting
@@ -82,7 +83,7 @@ def build_reminder_email(
 ) -> tuple[str, str]:
     """Build a polite payment reminder email for an overdue invoice."""
     days_overdue = (today - invoice.due_date).days
-    amount_str = _eur(invoice.amount, lang)
+    amount_str = format_eur(invoice.amount, lang)
     if lang == "de":
         subject = f"Zahlungserinnerung: Rechnung #{invoice.id}"
         body = (
@@ -104,14 +105,6 @@ def build_reminder_email(
             f"Kind regards"
         )
     return subject, body
-
-
-def _eur(value: float, lang: str) -> str:
-    """12345.6 -> '12.345,60 EUR' (de) or '12,345.60 EUR' (en)."""
-    text = f"{value:,.2f}"
-    if lang == "de":
-        text = text.replace(",", "\0").replace(".", ",").replace("\0", ".")
-    return f"{text} EUR"
 
 
 def _format_change(current: float, previous: float) -> str:
@@ -141,9 +134,9 @@ def build_summary_email(
     if lang == "de":
         subject = "Wöchentliche KPI-Zusammenfassung"
         lines = [
-            f"Umsatz: {_eur(current['revenue'], lang)}{_format_change(current['revenue'], previous['revenue'])}",
+            f"Umsatz: {format_eur(current['revenue'], lang)}{_format_change(current['revenue'], previous['revenue'])}",
             f"Bestellungen: {current['order_count']}{_format_change(current['order_count'], previous['order_count'])}",
-            f"Durchschnittlicher Bestellwert: {_eur(current['avg_order_value'], lang)}{_format_change(current['avg_order_value'], previous['avg_order_value'])}",
+            f"Durchschnittlicher Bestellwert: {format_eur(current['avg_order_value'], lang)}{_format_change(current['avg_order_value'], previous['avg_order_value'])}",
             f"Neue Kunden: {current['new_customers']}{_format_change(current['new_customers'], previous['new_customers'])}",
             f"Überfällige Rechnungen: {overdue_count}",
             f"Produkte mit niedrigem Bestand: {low_stock_count}",
@@ -151,9 +144,9 @@ def build_summary_email(
     else:
         subject = "Weekly KPI Summary"
         lines = [
-            f"Revenue: {_eur(current['revenue'], lang)}{_format_change(current['revenue'], previous['revenue'])}",
+            f"Revenue: {format_eur(current['revenue'], lang)}{_format_change(current['revenue'], previous['revenue'])}",
             f"Orders: {current['order_count']}{_format_change(current['order_count'], previous['order_count'])}",
-            f"Average Order Value: {_eur(current['avg_order_value'], lang)}{_format_change(current['avg_order_value'], previous['avg_order_value'])}",
+            f"Average Order Value: {format_eur(current['avg_order_value'], lang)}{_format_change(current['avg_order_value'], previous['avg_order_value'])}",
             f"New Customers: {current['new_customers']}{_format_change(current['new_customers'], previous['new_customers'])}",
             f"Overdue Invoices: {overdue_count}",
             f"Low Stock Products: {low_stock_count}",

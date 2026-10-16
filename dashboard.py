@@ -9,6 +9,7 @@ import plotly.express as px
 from app.bootstrap import ensure_demo_data
 from app.db import get_engine
 from app.data import load_table, load_orders, load_invoices
+from app.formatting import format_eur
 from app.i18n import t
 from app.kpis import (
     compute_kpis,
@@ -82,11 +83,6 @@ def render_kpis(
     prev_start, prev_end = previous_period(start, end)
     prev = compute_kpis(orders, prev_start, prev_end)
     cols = [*st.columns(3), *st.columns(2)]  # two rows so values never truncate
-    def fmt(v: float, decimals: int = 0) -> str:
-        text = f"{v:,.{decimals}f}"
-        if lang == "de":  # 12,345.60 -> 12.345,60
-            text = text.replace(",", "\0").replace(".", ",").replace("\0", ".")
-        return f"{text} EUR"
 
     for col, key, label in zip(
         cols,
@@ -106,7 +102,7 @@ def render_kpis(
             if prev_val != 0:
                 delta = (val - prev_val) / prev_val * 100
             if key in ("revenue", "avg_order_value"):
-                st.metric(label, fmt(val, 2 if key == "avg_order_value" else 0), delta=f"{delta:.1f}%" if delta is not None else None)
+                st.metric(label, format_eur(val, lang, 2 if key == "avg_order_value" else 0), delta=f"{delta:.1f}%" if delta is not None else None)
             else:
                 st.metric(label, int(val), delta=f"{delta:.1f}%" if delta is not None else None)
 
@@ -146,6 +142,7 @@ def render_tables(
         if tp.empty:
             st.info(t(lang, "no_data"))
         else:
+            tp = tp.assign(revenue=tp["revenue"].map(lambda v: format_eur(v, lang)))
             tp = tp.rename(columns={"name": t(lang, "name"), "units": t(lang, "units"), "revenue": t(lang, "revenue")})
             st.dataframe(tp, hide_index=True, width="stretch")
     with col2:
@@ -154,6 +151,7 @@ def render_tables(
         if tc.empty:
             st.info(t(lang, "no_data"))
         else:
+            tc = tc.assign(revenue=tc["revenue"].map(lambda v: format_eur(v, lang)))
             tc = tc.rename(columns={"name": t(lang, "name"), "orders": t(lang, "orders"), "revenue": t(lang, "revenue")})
             st.dataframe(tc, hide_index=True, width="stretch")
     st.subheader(t(lang, "open_invoices"))
@@ -165,6 +163,7 @@ def render_tables(
         inv = inv.sort_values(by=["status", "due_date"], ascending=[False, True])  # overdue first
         inv["status"] = inv["status"].map(lambda s: t(lang, s))
         inv["due_date"] = inv["due_date"].dt.date
+        inv["amount"] = inv["amount"].map(lambda v: format_eur(v, lang))
         inv = inv[["id", "due_date", "amount", "status"]].rename(
             columns={
                 "id": t(lang, "invoice"),
