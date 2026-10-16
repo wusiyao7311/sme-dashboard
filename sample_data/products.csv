@@ -1,0 +1,6 @@
+sku;name;category;price;stock_qty;low_stock_threshold
+SKU-001;Arabica Röstung 1;Kaffee;78,53;9;10
+SKU-002;Entkoffeiniert 2;Tee;36,63;35;17
+SKU-003;Espresso Blend 3;Zubehör;89,69;151;12
+SKU-004;Filterkaffee 4;Geschenksets;53,52;23;10
+SKU-005;Grüner Tee 5;Kaffee;30,14;143;10

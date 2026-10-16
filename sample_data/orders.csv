@@ -1,0 +1,4 @@
+order_ref;order_date;customer_email;sku;qty
+B-1;2026-10-01;lukas.koch0@example.com;SKU-001;2
+B-1;2026-10-01;lukas.koch0@example.com;SKU-005;1
+B-2;2026-10-03;emma.schneider1@example.com;SKU-002;3

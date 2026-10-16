@@ -3,3 +3,4 @@ sqlalchemy>=2.0
 pandas>=2.2
 plotly>=5.20
 pytest>=8
+openpyxl>=3.1
