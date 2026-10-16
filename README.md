@@ -2,6 +2,8 @@
 
 **Stop building reports by hand.** One dashboard for your orders, invoices and customers, with automated summaries and reminders (automations coming in week 3).
 
+👉 **[Live demo](https://sme-dashboard-cl9flxpzsuqyssqtymdxrc.streamlit.app/)** (fake data, no login)
+
 ## Run locally
 
 ```bash
