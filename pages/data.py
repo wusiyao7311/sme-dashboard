@@ -6,6 +6,7 @@ from datetime import date, datetime
 import pandas as pd
 import streamlit as st
 
+from app.bootstrap import ensure_demo_data
 from app.db import get_engine
 from app.importer import (
     ImportResult,
@@ -18,6 +19,7 @@ from app.datev import build_datev_csv, load_invoices_for_export
 from sqlalchemy.orm import Session
 
 st.set_page_config(page_title="Data", layout="wide")
+st.cache_resource(ensure_demo_data)()
 
 STRINGS = {
     "de": {

@@ -6,6 +6,7 @@ from datetime import date
 import streamlit as st
 from sqlalchemy.orm import Session
 
+from app.bootstrap import ensure_demo_data
 from app.db import get_engine
 from app.models import Setting
 from app.automations import (
@@ -17,6 +18,7 @@ from app.automations import (
 from app.i18n import t
 
 st.set_page_config(page_title="Settings", layout="wide")
+st.cache_resource(ensure_demo_data)()
 
 STRINGS = {
     "de": {

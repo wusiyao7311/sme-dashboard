@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+from app.bootstrap import ensure_demo_data
 from app.db import get_engine
 from app.data import load_table, load_orders, load_invoices
 from app.i18n import t
@@ -16,6 +17,11 @@ from app.kpis import (
     top_products,
     top_customers,
 )
+
+
+@st.cache_resource
+def _seed_once() -> bool:
+    return ensure_demo_data()
 
 
 @st.cache_data(ttl=60)
@@ -173,6 +179,7 @@ def render_tables(
 
 def main() -> None:
     st.set_page_config(page_title="Business Dashboard", layout="wide")
+    _seed_once()
     lang, start, end, freq = render_sidebar()
     data = load_data()
     orders = data["orders"]

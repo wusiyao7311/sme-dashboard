@@ -1,0 +1,43 @@
+name: Automations
+
+# Needs repository secrets: DATABASE_URL (PostgreSQL), SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, MAIL_FROM.
+# The public demo uses a throwaway SQLite file, so these jobs only make sense against your real database.
+on:
+  schedule:
+    - cron: "0 7 * * *"      # daily 07:00 UTC (08:00/09:00 in Germany): stock alert + payment reminders
+    - cron: "0 6 * * 1"      # Mondays 06:00 UTC: weekly summary email
+  workflow_dispatch:
+    inputs:
+      job:
+        description: Job to run
+        type: choice
+        options: [daily, weekly, summary, low-stock, reminders]
+        default: daily
+
+concurrency: automations
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+      SMTP_PORT: ${{ secrets.SMTP_PORT }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      MAIL_FROM: ${{ secrets.MAIL_FROM }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt psycopg2-binary
+      - name: Pick job
+        id: job
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then echo "name=${{ inputs.job }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" = "0 6 * * 1" ]; then echo "name=weekly" >> "$GITHUB_OUTPUT"
+          else echo "name=daily" >> "$GITHUB_OUTPUT"; fi
+      - run: python -m scripts.run_automations "${{ steps.job.outputs.name }}"
