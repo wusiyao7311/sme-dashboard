@@ -42,6 +42,7 @@ def render_sidebar() -> tuple[str, date, date, str]:
         index=0,
         format_func=lambda x: "Deutsch" if x == "de" else "English",
     )
+    st.session_state["lang"] = lang  # shared with the settings page
     data = load_data()
     orders = data["orders"]
     if orders.empty:
