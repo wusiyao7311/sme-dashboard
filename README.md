@@ -4,6 +4,12 @@
 
 👉 **[Live demo](https://sme-dashboard-cl9flxpzsuqyssqtymdxrc.streamlit.app/)** (fake data, no login)
 
+![Dashboard](docs/dashboard.png)
+
+| Import and DATEV export | Automations and settings |
+|---|---|
+| ![Data](docs/data.png) | ![Settings](docs/settings.png) |
+
 ## Run locally
 
 ```bash
