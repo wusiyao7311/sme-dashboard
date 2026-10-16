@@ -17,5 +17,16 @@ pytest                          # KPI tests
 - **Import** CSV or Excel (products, customers, orders) on the *Data* page. Examples in `sample_data/`. Re-importing orders creates duplicates (no order reference is stored).
 - **DATEV export**: Buchungsstapel CSV (EXTF 700) for open and paid invoices, debtor account = 10000 + customer id, revenue account 8400 (SKR03). Have your tax advisor check the account numbers before importing.
 
+## Automations on a schedule
+`python -m scripts.run_automations daily|weekly|summary|low-stock|reminders` runs the jobs; `.github/workflows/automations.yml` runs them via GitHub Actions cron (daily 07:00 UTC, weekly summary Mondays 06:00 UTC). Add the repository secrets `DATABASE_URL` (PostgreSQL), `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM`. Without `SMTP_HOST`, emails are written to `./outbox`.
+
+## Deploy the live demo (Streamlit Community Cloud)
+1. Push this repo to GitHub (public).
+2. On share.streamlit.io choose *New app*, pick the repo, branch `main`, main file `streamlit_app.py`, Python 3.11.
+3. No secrets needed: on first start the app creates a SQLite file with fake demo data. It is reset whenever the app restarts.
+
+## GDPR notes
+The demo contains only fake data. For real customer data use an EU-hosted PostgreSQL (e.g. Neon or Supabase in Frankfurt) and an EU email provider, and sign a data processing agreement (AVV) with each provider.
+
 ## Status
 Week 1 scaffold: schema, seed script, KPI functions with tests, first dashboard (KPI cards, revenue chart, top tables, open invoices, DE/EN).
