@@ -1,7 +1,7 @@
 """German/English UI strings. Use t(lang, key)."""
 STRINGS = {
     "de": {
-        "title": "Geschäfts-Dashboard", "language": "Sprache", "date_range": "Zeitraum",
+        "title": "Geschäfts-Dashboard", "date": "Datum", "language": "Sprache", "date_range": "Zeitraum",
         "granularity": "Auflösung", "day": "Tag", "week": "Woche", "month": "Monat",
         "revenue": "Umsatz", "orders": "Bestellungen", "avg_order_value": "Ø Bestellwert",
         "new_customers": "Neukunden", "returning_customers": "Bestandskunden",
@@ -13,7 +13,7 @@ STRINGS = {
         "no_db": "Keine Datenbank gefunden. Bitte zuerst `python -m scripts.seed` ausführen.",
     },
     "en": {
-        "title": "Business Dashboard", "language": "Language", "date_range": "Date range",
+        "title": "Business Dashboard", "date": "Date", "language": "Language", "date_range": "Date range",
         "granularity": "Granularity", "day": "Day", "week": "Week", "month": "Month",
         "revenue": "Revenue", "orders": "Orders", "avg_order_value": "Avg. order value",
         "new_customers": "New customers", "returning_customers": "Returning customers",

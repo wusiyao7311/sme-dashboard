@@ -74,9 +74,9 @@ def render_kpis(
     kpis = compute_kpis(orders, start, end)
     prev_start, prev_end = previous_period(start, end)
     prev = compute_kpis(orders, prev_start, prev_end)
-    cols = st.columns(5)
-    def fmt(v: float) -> str:
-        text = f"{v:,.2f}"
+    cols = [*st.columns(3), *st.columns(2)]  # two rows so values never truncate
+    def fmt(v: float, decimals: int = 0) -> str:
+        text = f"{v:,.{decimals}f}"
         if lang == "de":  # 12,345.60 -> 12.345,60
             text = text.replace(",", "\0").replace(".", ",").replace("\0", ".")
         return f"{text} EUR"
@@ -99,7 +99,7 @@ def render_kpis(
             if prev_val != 0:
                 delta = (val - prev_val) / prev_val * 100
             if key in ("revenue", "avg_order_value"):
-                st.metric(label, fmt(val), delta=f"{delta:.1f}%" if delta is not None else None)
+                st.metric(label, fmt(val, 2 if key == "avg_order_value" else 0), delta=f"{delta:.1f}%" if delta is not None else None)
             else:
                 st.metric(label, int(val), delta=f"{delta:.1f}%" if delta is not None else None)
 
@@ -115,7 +115,10 @@ def render_chart(
     if df.empty:
         st.info(t(lang, "no_data"))
         return
-    fig = px.line(df, x="period", y="revenue", title=t(lang, "revenue_over_time"))
+    fig = px.line(
+        df, x="period", y="revenue", title=t(lang, "revenue_over_time"),
+        labels={"period": t(lang, "date"), "revenue": t(lang, "revenue") + " (EUR)"},
+    )
     st.plotly_chart(fig)
 
 
